@@ -1,7 +1,7 @@
 // Game values
 let min = 1,
   max = 10,
-  winningNum = 2,
+  winningNum = getRandomNum(min, max),
   guessesLeft = 3;
 
 // UI Elements
@@ -15,6 +15,13 @@ const UIgame = document.querySelector('#game'),
 // Assign UI min and max
 UIminNum.textContent = min;
 UImaxNum.textContent = max;
+
+// Play again event listener
+UIgame.addEventListener('mousedown', function (e) {
+  if (e.target.className === 'play-again') {
+    window.location.reload();
+  }
+});
 
 // Listen for guess
 UIguessBtn.addEventListener('click', function () {
@@ -30,7 +37,6 @@ UIguessBtn.addEventListener('click', function () {
     // Game over = won
 
     gameOver(true, `${winningNum} is correct, YOU WIN!`);
-
   } else {
     // Wrong Number
     guessesLeft -= 1;
@@ -38,8 +44,10 @@ UIguessBtn.addEventListener('click', function () {
     if (guessesLeft === 0) {
       // Game over - lost
 
-      gameOver(false, `Game Over, you lost. The correct number was ${winningNum}.`);
-
+      gameOver(
+        false,
+        `Game Over, you lost. The correct number was ${winningNum}.`
+      );
     } else {
       // Game continues - answer wrong
 
@@ -56,9 +64,9 @@ UIguessBtn.addEventListener('click', function () {
 });
 
 // Game over
-function gameOver(won, msg){
+function gameOver(won, msg) {
   let color;
-  won === true ? color = 'green' : color = 'red';
+  won === true ? (color = 'green') : (color = 'red');
 
   // Disable input
   UIguessInput.disabled = true;
@@ -71,6 +79,18 @@ function gameOver(won, msg){
   // Set message
   setMessage(msg, color);
 
+  // Play Again?
+  UIguessBtn.value = 'Play Again';
+  // Since this class added after a page load
+  // We need to use event deligation, which means we have
+  // to add alistener onto a parent, and then we need
+  // to search for a target that we want which is the play-again
+  UIguessBtn.className += 'play-again';
+}
+
+// Get Winning Number
+function getRandomNum(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 // Set Message
